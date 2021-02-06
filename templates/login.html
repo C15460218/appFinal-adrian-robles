@@ -1,4 +1,28 @@
 {% extends 'base.html' %}
 {% block title %}
-    Login
+Login
+{% endblock %}
+{% block content %}
+    {% block body %}
+        {{super()}}
+        <div class="container">
+            <h1>Inicio de Sesion</h1>
+            <form>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Usuario</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="contra">Contraseña</label>
+                    <input type="password" class="form-control" id="contra" placeholder="Contraseña">
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">Recuerdame</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Iniciar Sesion</button>
+            </form>
+        </div>
+    {% endblock %}
 {% endblock %}

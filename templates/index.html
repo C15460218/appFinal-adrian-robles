@@ -3,15 +3,14 @@
     Inicio
 {% endblock %}
 {% block navbar %}
-    <div class="navbar navbar-fixed-top">
-        
-    </div>
+
 {% endblock %}
 {% block body %}
+    {{super()}}
     <div class="jumbotron">
-        <h1>"Servicio Metereológico"</h1>
+        <h1>Servicio Metereológico</h1>
         <p>
-            <img src={{ url_for('static', filename="itcolima.svg" ) }} height="250" width="250">
+            <!-- <img src={{ url_for('static', filename="itcolima.svg" ) }} height="250" width="250"> -->
         </p>
         <ul>
             {% for elemento in variable %}

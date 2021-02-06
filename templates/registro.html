@@ -2,3 +2,41 @@
 {% block title %}
     Registro
 {% endblock %}
+{% block content %}
+    {% block body %}
+        {{super()}}
+        <div class="container">
+            <form action="/register" method="POST">
+                <div class="form-group">
+                    <label for="nusuario">Usuario</label>
+                    <input type="text" class="form-control" id="nusuario" name="nusuario" placeholder="Usuario">
+                </div>
+                <div class="form-group">
+                    <label for="nnombre">Nombre(s)</label>
+                    <input type="text" class="form-control" id="nnombre" name="nnombre" placeholder="Nombre">
+                </div>
+                <div class="form-group">
+                    <label for="napellido">Apellidos</label>
+                    <input type="text" class="form-control" id="napellido" name="napellido" placeholder="Apellidos">
+                </div>
+                <div class="form-group">
+                <label for="ncorreo">Correo Electrónico</label>
+                <input type="email" class="form-control" id="ncorreo" name="ncorreo" aria-describedby="emailHelp" placeholder="Ingresa correo">
+                <small id="emailHelp" class="form-text text-muted">Nunca compartiremos tu correo con nadie más.</small>
+                </div>
+                <div class="form-group">
+                <label for="ncontra">Contraseña</label>
+                <input type="password" class="form-control" id="ncontra" name="ncontra" placeholder="Contraseña">
+                </div>
+                <div class="form-group">
+                    <label for="ncontrac">Confirmar Contraseña</label>
+                    <input type="password" class="form-control" id="ncontrac" name="ncontrac" placeholder="Confirmar Contraseña">
+                </div>
+                <button type="submit" class="btn btn-success">Registrarse</button>
+                {% if mensaje != "" %}
+                    <p>{{mensaje}}</p>
+                {% endif %}
+            </form>
+        </div>
+    {% endblock %}
+{% endblock %}

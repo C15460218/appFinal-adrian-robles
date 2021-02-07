@@ -1,8 +1,14 @@
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import datetime
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+from flask_login import login_user, logout_user, login_required, current_user
+
+import os
+from flask_mail import Mail
+from flask_mail import Message
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -12,6 +18,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 db=SQLAlchemy(app)
 bcrypt = Bcrypt()
 bcrypt.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.log_view='login'
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'sender.adrian.141197@gmail.com'
+app.config['MAIL_PASSWORD'] = 'maadem141197'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 #Index
 @app.route('/',methods=['GET','POST'])
@@ -22,8 +40,19 @@ def index():
     return render_template('index.html')
 
 @app.route('/historial')
+@login_required
 def historial():
-   return 'Historial'
+    registros = Consulta.query.filter_by(id_usuario=current_user.id)
+    return render_template('historial.html',registros=registros)
+
+@app.route('/acerca')
+def acerca():
+   return render_template('acerca.html')
+
+@app.route('/perfil')
+@login_required
+def perfil():
+   return render_template('perfil.html')
 
 #login
 @app.route('/login',methods=['GET','POST'])
@@ -36,7 +65,29 @@ def login():
 @app.route('/loginin',methods=['GET','POST'])
 def loginin():
     if request.method == 'POST':
-        print("Login in")
+        usuario = request.form['user']
+        passw = request.form['pwd']
+        usuario_existe = Usuario.query.filter_by(nusuario = usuario).first()
+        print(usuario_existe)
+        mensaje = usuario_existe.correo
+        if usuario_existe != None:
+            print("Existe")
+            if bcrypt.check_password_hash(usuario_existe.passw,passw):
+                print("Usuario Autenticado")
+                login_user(usuario_existe)
+                if current_user.is_authenticated:
+                    flash("Inicio de Sesion Exitoso!")
+                    return redirect("/")
+        return render_template('login.html',mensaje=mensaje)
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Cierre de Sesion Exitoso")
+    return redirect("/")
+   
 
 #register
 @app.route('/register',methods=['GET','POST'])
@@ -60,12 +111,17 @@ def register():
                 nombre = nnombre,
                 apellido = napellido,
                 correo = ncorreo,
-                passw = bcrypt.generate_password_hash(ncontras)
+                passw = bcrypt.generate_password_hash(ncontras).decode('utf-8')
             )
             db.session.add(usuario)
             db.session.commit()
-            mensaje = "Usuario registrado!"
-            return render_template('index.html',mensaje=mensaje)
+            #Enviar correo
+            msg = Message("Gracias por registrarte en la nube!", sender="sender.adrian.141197@gmail.com", recipients=[ncorreo])
+            msg.body = "Este es un email de prueba"
+            msg.html = "<p>Gracias por registrarte en la pagina, este es un mensaje de verificacion</p>"
+            mail.send(msg)
+            flash("Usuario Registrado! Revise su correo")
+            return redirect("/")
         # Handle POST Request here
         return render_template('registro.html')
     return render_template('registro.html')
@@ -88,6 +144,22 @@ class Usuario(db.Model):
     
     def __repr__(self):
         return 'El usuario es {} con nombre {} {} y correo {}'.format(self.nusuario,self.nombre,self.apellido,self.correo)
+    
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+    
+    def get_id(self):
+        return str(self.id)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.filter_by(id=user_id).first()
 
 
 class Ciudad(db.Model):

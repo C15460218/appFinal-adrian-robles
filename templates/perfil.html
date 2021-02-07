@@ -2,3 +2,13 @@
 {% block title %}
     Perfil
 {% endblock %}
+{% block body %}
+    {{super()}}
+    <div class="container">
+        <h1>{{current_user.nusuario}}</h1>
+        <label>Nombre: </label>
+        <p>{{current_user.nombre}} {{current_user.apellido}}</p>
+        <label>Correo: </label>
+        <p>{{current_user.correo}}</p>
+    </div>
+{% endblock %}

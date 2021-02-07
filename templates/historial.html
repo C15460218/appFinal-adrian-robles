@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    Historial
+{% endblock %}
+{% block body %}
+    {{super()}}
+    <div class="container">
+        <h1>Historial</h1>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <th>Ciudad</th>
+                <th>Fecha</th>
+            </thead>
+            <tbody>
+                {% for registro in registros %}
+                    <tr>{{registro.id_ciudad}}</tr>
+                    <tr>{{registro.fecha}}</tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

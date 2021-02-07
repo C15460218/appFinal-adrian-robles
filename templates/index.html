@@ -7,28 +7,19 @@
 {% endblock %}
 {% block body %}
     {{super()}}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <div class="jumbotron">
-        <h1>Servicio Metereológico</h1>
+        
+        <h1>Servicio Metereológico</h1><br>
         <p>
             <!-- <img src={{ url_for('static', filename="itcolima.svg" ) }} height="250" width="250"> -->
         </p>
-        <ul>
-            {% for elemento in variable %}
-            <li> <a href="\{{elemento}}">{{elemento}}</a></li>
-            {% endfor %}
-        </ul>
-        {% if "Acerca" in variable %}
-        <p>Elemento Acerca en la lista</p>
-        {% else %}
-        <p>El elemento Acerca no existe en la lista</p>
-        {% endif %}
-
-        <form method="POST">
-            <input type="text" name="nombre" value="" placeholder="Nombre">
-            <input type="text" name="apellido" value="" placeholder="Apellido">
-            <button type="submit" name="button" class="btn btn-primary">Registrar</button>
-        </form>
-
-        <p>{{mensaje}}</p>
+        <div id="cont_c814784281839d6b1eedebd3d0c2c89a"><script type="text/javascript" async src="https://www.meteored.mx/wid_loader/c814784281839d6b1eedebd3d0c2c89a"></script></div>
     </div>
 {% endblock %}

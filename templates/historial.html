@@ -9,12 +9,14 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <th>Ciudad</th>
-                <th>Fecha</th>
+                <th>Fecha de consulta</th>
             </thead>
             <tbody>
                 {% for registro in registros %}
-                    <tr>{{registro.id_ciudad}}</tr>
-                    <tr>{{registro.fecha}}</tr>
+                    <tr>
+                        <td>{{registro.id_ciudad}}</td>
+                        <td>{{registro.fecha}}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

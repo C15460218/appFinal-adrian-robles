@@ -5,6 +5,7 @@ from datetime import datetime
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_login import login_user, logout_user, login_required, current_user
+import requests
 
 import os
 from flask_mail import Mail
@@ -31,13 +32,47 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
+
 #Index
 @app.route('/',methods=['GET','POST'])
 def index():
+    busq=""
+    params = {
+            'access_key': 'e7cd1b2453a6b98d4aea423f1ea60b6a',
+            'query': 'Colima'
+        }
+    api_result = requests.get('https://api.weatherstack.com/current', params)
+    api_response = api_result.json()
     if request.method=='POST':
+        busq = request.form['busqueda']
+        print(busq)
+        params = {
+            'access_key': 'e7cd1b2453a6b98d4aea423f1ea60b6a',
+            'query': busq
+        }
+        api_result = requests.get('https://api.weatherstack.com/current', params)
+        api_response = api_result.json()
+        #print(api_result)
+        print(api_response)
+        print(u'Current temperature in %s is %d℃' % (api_response['location']['name'], api_response['current']['temperature']))
         # Handle POST Request here
-        return render_template('index.html')
-    return render_template('index.html')
+        if current_user.is_authenticated:
+            ciudad = Ciudad.query.filter_by(nombre=busq).first()
+            print(ciudad)
+            if ciudad == None:
+                city = Ciudad(nombre=busq)
+                db.session.add(city)
+                db.session.commit()
+            ciudad = Ciudad.query.filter_by(nombre=busq).first()
+            consulta = Consulta(
+                id_usuario = current_user.id,
+                id_ciudad = ciudad.id,
+                fecha = datetime.now()
+            )
+            db.session.add(consulta)
+            db.session.commit()
+        return render_template('index.html',clima=api_response)
+    return render_template('index.html',clima=api_response)
 
 @app.route('/historial')
 @login_required
@@ -165,15 +200,13 @@ def load_user(user_id):
 class Ciudad(db.Model):
     __tablename__ = 'ciudad'
     id = db.Column(db.Integer,primary_key=True)
-    nombre = db.Column(db.String(30))
-    codigoPostal = db.Column(db.Integer)
+    nombre = db.Column(db.String(30),index=True)
 
-    def __init__(self,nombre,codigoPostal):
+    def __init__(self,nombre):
         self.nombre = nombre
-        self.codigoPostal = codigoPostal
     
     def __repr__(self):
-        return 'La ciudad es: {} con código postal: {}'.format(self.nombre,self.codigoPostal)
+        return 'La ciudad es: {}'.format(self.nombre)
 
 
 class Consulta(db.Model):
@@ -181,6 +214,11 @@ class Consulta(db.Model):
     id_usuario = db.Column(db.Integer,db.ForeignKey('usuario.id'),primary_key=True)
     id_ciudad = db.Column(db.Integer,db.ForeignKey('ciudad.id'),primary_key=True)
     fecha = db.Column(db.DateTime, default=datetime.utcnow,primary_key=True)
+
+    def __init__(self,id_usuario,id_ciudad,fecha):
+        self.id_usuario = id_usuario
+        self.id_ciudad = id_ciudad
+        self.fecha = fecha
 
 
 if __name__ == '__main__':

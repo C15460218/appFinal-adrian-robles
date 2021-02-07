@@ -16,10 +16,22 @@
     {% endwith %}
     <div class="jumbotron">
         
-        <h1>Servicio Metereológico</h1><br>
+        <h1>Servicio Metereológico</h1><br><br>
         <p>
             <!-- <img src={{ url_for('static', filename="itcolima.svg" ) }} height="250" width="250"> -->
         </p>
-        <div id="cont_c814784281839d6b1eedebd3d0c2c89a"><script type="text/javascript" async src="https://www.meteored.mx/wid_loader/c814784281839d6b1eedebd3d0c2c89a"></script></div>
+        <div class="container">
+            <label>Ciudad:</label>
+            <p>{{clima['location']['name']}}</p>
+            <label>Temperatura:</label>
+            <p>{{clima['current']['temperature']}} ℃</p>
+            <label>Sensacion Térmica:</label>
+            <p>{{clima['current']['feelslike']}} ℃</p>
+            <label>Precipitacion de lluvia:</label>
+            <p>{{clima['current']['precip']}}%</p>
+            <label>Precipitacion de lluvia:</label>
+            <p>{{clima['current']['humidity']}}</p>
+            
+        </div>
     </div>
 {% endblock %}

@@ -13,8 +13,8 @@ from flask_mail import Message
 
 app = Flask(__name__)
 Bootstrap(app)
-#app.config['SQLALCHEMY_DATABASE_URI']='postgres://qkzigtnnwgatix:d42371c3df95181f15bef8e1e0f5ef2ec2f8076305db278dcfef720ede70c363@ec2-52-6-178-202.compute-1.amazonaws.com:5432/d4l74kfk7riufd'
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql+psycopg2://postgres:marcopolo123@localhost:5432/meteorologico'
+app.config['SQLALCHEMY_DATABASE_URI']='postgres://qkzigtnnwgatix:d42371c3df95181f15bef8e1e0f5ef2ec2f8076305db278dcfef720ede70c363@ec2-52-6-178-202.compute-1.amazonaws.com:5432/d4l74kfk7riufd'
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql+psycopg2://postgres:marcopolo123@localhost:5432/meteorologico'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 db=SQLAlchemy(app)
 bcrypt = Bcrypt()
